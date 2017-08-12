@@ -1,0 +1,3 @@
+---
+static_app_name: default
+static_app_dir: /srv/{{ static_app_name }}

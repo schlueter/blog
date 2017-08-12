@@ -1,0 +1,13 @@
+---
+- name: install nginx config for static app from template
+  template:
+    src: etc/nginx/sites-available/static-app.conf.j2
+    dest: /etc/nginx/sites-available/{{ static_app_name }}.conf
+  notify: reload nginx
+
+- name: activate static app nginx config
+  file:
+    state: link
+    src: /etc/nginx/sites-available/{{ static_app_name }}.conf
+    dest: /etc/nginx/sites-enabled/{{ static_app_name }}.conf
+  notify: reload nginx

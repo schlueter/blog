@@ -1,0 +1,10 @@
+---
+- name: install nginx
+  apt: name=nginx state=installed update_cache=yes cache_valid_time=1800
+
+- name: remove default site
+  file: state=absent path=/etc/nginx/{{ item }}/default
+  with_items:
+    - sites-available
+    - sites-enabled
+  notify: reload nginx

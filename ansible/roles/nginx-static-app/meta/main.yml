@@ -1,0 +1,4 @@
+---
+dependencies:
+  - static-app
+  - nginx-base

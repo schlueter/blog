@@ -1,0 +1,15 @@
+---
+- name: install apt prerequisites
+  apt:
+    name: "{{ item }}"
+    state: installed
+    update_cache: yes
+    cache_valid_time: 1800
+  with_items:
+    - jq
+    - make
+    - pysassc
+    - python-setuptools
+
+- name: build static app
+  make: chdir={{ static_app_dir }} target=build

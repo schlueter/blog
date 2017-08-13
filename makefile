@@ -26,23 +26,20 @@ default: help
 # Variables
 VARS_OLD    := $(.VARIABLES)
 
-SRC_DIR   := src
+SRC_DIR   := srv/src
 SRC_INDEX := $(SRC_DIR)/index.html
 SRC_JS    := $(shell awk '/js-concat:/,/js-concat\ fi\ /{ if (!/(js-concat:|js-concat\ fi)/)print}' $(SRC_INDEX) | sed -n 's/.*src="\(.*\)".*/\1/p')
 SRC_SASS  := $(shell awk '/sass-build:/,/sass-build\ fi\ /{ if (!/(sass-build:|sass-build\ fi)/)print}' $(SRC_INDEX) | sed -n 's/.*href="\(.*\)".*/\1/p')
 
-RELATIVE_STATIC := static
+RELATIVE_STATIC := public/static
 RELATIVE_CSS    := $(RELATIVE_STATIC)/$(shell sed -n 's/.*sass-build:\ \([^ ]*\)\ -->*/\1/p' $(SRC_INDEX))
 RELATIVE_JS     := $(RELATIVE_STATIC)/$(shell sed -n 's/.*js-concat:\ \([^ ]*\)\ -->*/\1/p' $(SRC_INDEX))
 
-DEST_DIR    := public
-DEST_INDEX  := $(DEST_DIR)/index.html
-DEST_STATIC := $(DEST_DIR)/$(RELATIVE_STATIC)
-DEST_CSS    := $(DEST_DIR)/$(RELATIVE_CSS)
-DEST_JS     := $(DEST_DIR)/$(RELATIVE_JS)
-
-MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
-CURRENT_DIR   := $(patsubst %/,%,$(dir $(MAKEFILE_PATH)))
+DEST_INDEX  := srv/index.html
+DEST_DIR    := srv/public
+DEST_STATIC := srv/$(RELATIVE_STATIC)
+DEST_CSS    := srv/$(RELATIVE_CSS)
+DEST_JS     := srv/$(RELATIVE_JS)
 
 INFO_COLOR  := '\e[0;34m'
 WARN_COLOR  := '\e[1;31m'
@@ -50,7 +47,7 @@ CLEAR_COLOR := '\e[0m'
 
 vars: ## List the variables used by this makefile with their values
 	$(foreach v,                                        \
-		$(filter-out $(VARS_OLD) VARS_OLD,$(.VARIABLES)), \
+		$(filter-out $(VARS_OLD) VARS_OLD RELATIVE_STATIC DEST_DIR INFO_COLOR WARN_COLOR CLEAR_COLOR,$(.VARIABLES)), \
 		$(info $(v) = $($(v))))
 	@# Thanks Ise Wisteria (borrowed from https://stackoverflow.com/a/7119460/1054423)
 	@# These comments also prevent the "make: Nothing to be done for 'vars'." message
@@ -74,7 +71,7 @@ help: ## Show this help
 	@sed -n 's/^#\^ \?//p' $(MAKEFILE_LIST)
 	@# find all lines in make files containing ##, sort them, remove lines containing "##", then pretty print them
 	@grep -h "## " $(MAKEFILE_LIST) | sort | awk -F ' ## ' ' \
-		!/"##"/ { \
+		!/"## "/ { \
 			gsub(":.*", "", $$1); \
 			printf "%10s :: %s\n", $$1, $$2; \
 	  }'
@@ -92,11 +89,11 @@ lint: lint-js ## Lint src
 index: | js-index sass-index $(DEST_INDEX) ## Builds js and sass to public directory, and populates index template with relative paths to each to public index.html
 
 clean: ## Clean up build artifacts
-	rm -rf public
+	rm -rf $(DEST_DIR) $(DEST_INDEX)
 
 edit: ## Edit all src files with EDITOR
 	@# Find regular files (as opposed to directories and symlinks, which are files too) and pass them as arguments ({}) to editor all at once (+)
-	find src -type f -exec $$EDITOR {} +
+	find . -type f -wholename '*/src/*' -o -name 'makefile' -exec "$$EDITOR" {} +
 
 watch: ## Run `make index` on changes to src (* not implemented)
 	@# TODO needs to run `make clean build` until this makefile does incremental builds

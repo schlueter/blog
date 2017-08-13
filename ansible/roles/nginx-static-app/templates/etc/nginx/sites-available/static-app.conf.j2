@@ -1,4 +1,12 @@
 server {
     listen 80;
-    root {{ static_app_dir }}/public;
+    root {{ static_app_dir }}/srv;
+
+    location / {
+        try_files $uri/index.html
+                  $uri
+                  public/$uri
+                  src/$uri
+                  =404;
+    }
 }

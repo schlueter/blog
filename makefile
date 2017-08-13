@@ -82,8 +82,6 @@ help: ## Show this help
 	@sed -n 's/^#$$ \?//p' $(MAKEFILE_LIST)
 
 dev: ## Launch a development VM and run `make watch`
-	@# In case make is used from a different directory with -C
-	cd $(CURRENT_DIR)
 	vagrant up
 	make watch
 

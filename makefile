@@ -93,7 +93,7 @@ clean: ## Clean up build artifacts
 
 edit: ## Edit all src files with EDITOR
 	@# Find regular files (as opposed to directories and symlinks, which are files too) and pass them as arguments ({}) to editor all at once (+)
-	find . -type f -wholename '*/src/*' -o -name 'makefile' -exec "$$EDITOR" {} +
+	find . -type f \( -wholename '*/src/*' -o -name 'makefile' \) -exec "$$EDITOR" {} +
 
 watch: ## Run `make index` on changes to src (* not implemented)
 	@# TODO needs to run `make clean build` until this makefile does incremental builds

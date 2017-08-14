@@ -134,7 +134,7 @@ $(DEST_JS):
 	@for f in $(SRC_JS); \
 	do \
 		echo "Adding contents of $(SRC_DIR)/$$f to $(DEST_JS) in a closure";\
-		echo ';(function () {' >> $(DEST_JS); \
+		echo ';(() => {' >> $(DEST_JS); \
 		cat $(SRC_DIR)/$$f >> $(DEST_JS); \
 		echo '})()' >> $(DEST_JS); \
 	done

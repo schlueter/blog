@@ -35,8 +35,8 @@ RELATIVE_STATIC := public/static
 RELATIVE_CSS    := $(RELATIVE_STATIC)/$(shell sed -n 's/.*sass-build:\ \([^ ]*\)\ -->*/\1/p' $(SRC_INDEX))
 RELATIVE_JS     := $(RELATIVE_STATIC)/$(shell sed -n 's/.*js-concat:\ \([^ ]*\)\ -->*/\1/p' $(SRC_INDEX))
 
-DEST_INDEX  := srv/index.html
 DEST_DIR    := srv/public
+DEST_INDEX  := srv/public/index.html
 DEST_STATIC := srv/$(RELATIVE_STATIC)
 DEST_CSS    := srv/$(RELATIVE_CSS)
 DEST_JS     := srv/$(RELATIVE_JS)
@@ -89,7 +89,7 @@ lint: lint-js ## Lint src
 index: | js-index sass-index $(DEST_INDEX) ## Builds js and sass to public directory, and populates index template with relative paths to each to public index.html
 
 clean: ## Clean up build artifacts
-	rm -rf $(DEST_DIR) $(DEST_INDEX)
+	rm -rf $(DEST_DIR)
 
 edit: ## Edit all src files with EDITOR
 	@# Find regular files (as opposed to directories and symlinks, which are files too) and pass them as arguments ({}) to editor all at once (+)
